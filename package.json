@@ -1,0 +1,16 @@
+{
+  "name": "flatmarket-server-heroku",
+  "description": "A Flatmarket server for Heroku.",
+  "version": "0.0.0",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/christophercliff/flatmarket-server-heroku"
+  },
+  "dependencies": {
+    "flatmarket-server": "^1.0.0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "flatmarket-server-heroku",
+  "repository": "https://github.com/christophercliff/flatmarket-server-heroku",
+  "env": {
+    "CORS_ORIGINS": {
+      "required": false
+    },
+    "SCHEMA_URI": "",
+    "STRIPE_SECRET_KEY": ""
+  }
+}
