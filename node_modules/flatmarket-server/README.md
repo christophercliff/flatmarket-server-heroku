@@ -20,7 +20,7 @@ npm install flatmarket-server
 The server requires the following environment variables:
 
 ```
-CORS_ORIGINS=['your-origin.com']
+CORS_ORIGINS=["https://your-origin.com"]
 PORT=8000
 SCHEMA_URI=https://your-origin.com/flatmarket.json
 STRIPE_SECRET_KEY=your_stripe_secret_key

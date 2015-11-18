@@ -1,4 +1,5 @@
-/*eslint no-process-exit:0 */
+/* eslint no-process-exit: 0 */
+/* eslint no-process-env: 0 */
 require('./').startServer({
     corsOrigins: process.env.CORS_ORIGINS && JSON.parse(process.env.CORS_ORIGINS),
     port: process.env.PORT,

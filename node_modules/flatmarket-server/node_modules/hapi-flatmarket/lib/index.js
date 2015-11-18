@@ -46,29 +46,47 @@ function register(server, options, next) {
         path: PATH,
         handler: function (req, reply) {
             return request.get(options.schemaUri, { rejectUnauthorized: false })
-                .spread(function (res, payload) {
+                .spread(function (res, schemaPayload) {
                     if (res.statusCode !== 200) throw Boom.serverTimeout(util.format(MISSING_SCHEMA_ERROR, options.schemaUri))
-                    if (!flatmarketSchema.isValid(payload)) throw Boom.serverTimeout(util.format(INVALID_SCHEMA_ERROR, options.schemaUri))
-                    if (!isValidRequest(payload, req.payload)) throw Boom.badRequest()
-                    var schema = Joi.validate(payload, flatmarketSchema).value
-                    var metadata = _.omit.apply(_, [req.payload.metadata].concat([
-                        'email',
-                        'sku',
-                    ]))
-                    var sku = payload.products[req.payload.sku]
+                    if (!flatmarketSchema.isValid(schemaPayload)) throw Boom.serverTimeout(util.format(INVALID_SCHEMA_ERROR, options.schemaUri))
+                    if (!isValidRequest(schemaPayload, req.payload)) throw Boom.badRequest()
+                    var schema = Joi.validate(schemaPayload, flatmarketSchema).value
+                    var sku = schema.products[req.payload.sku]
                     var stripePayload = {
-                        metadata: _.merge({
-                            email: req.payload.email,
-                            sku: req.payload.sku,
-                        }, metadata),
+                        metadata: _.chain(req.payload.metadata)
+                            .omit([
+                                'email',
+                                'sku',
+                            ])
+                            .extend(_.pick(req.payload, [
+                                'email',
+                                'sku',
+                            ]))
+                            .value(),
                         source: req.payload.token,
+                    }
+                    var needsShippingAddress = _.get(schema, [
+                        'products',
+                        req.payload.sku,
+                        'shippingAddress',
+                    ]) || _.get(schema, [
+                        'stripe',
+                        'shippingAddress',
+                    ])
+                    var shippingAddress = _.get(req.payload, 'shipping')
+                    if (needsShippingAddress && !shippingAddress) throw Boom.badRequest('Requires shipping address.')
+                    if (!needsShippingAddress && shippingAddress) throw Boom.badRequest('Invalid shipping address.')
+                    if (shippingAddress) {
+                        _.extend(stripePayload, {
+                            shipping: shippingAddress,
+                        })
                     }
                     var stripeResource
                     if (_.has(sku, 'plan')) {
                         stripePayload = _.chain(sku)
                             .pick('plan')
-                            .merge(stripePayload)
-                            .merge({
+                            .extend(stripePayload)
+                            .extend({
                                 email: req.payload.email,
                             })
                             .value()
@@ -76,7 +94,7 @@ function register(server, options, next) {
                     } else {
                         stripePayload = _.chain(sku)
                             .pick('amount', 'currency')
-                            .merge(stripePayload)
+                            .extend(stripePayload)
                             .defaults({
                                 currency: schema.stripe.currency,
                             })

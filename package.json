@@ -11,6 +11,6 @@
     "url": "http://github.com/christophercliff/flatmarket-server-heroku"
   },
   "dependencies": {
-    "flatmarket-server": "^1.0.0"
+    "flatmarket-server": "^1.1.0"
   }
 }
