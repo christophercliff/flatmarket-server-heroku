@@ -1,10 +1,6 @@
-Made possible By [JSON Expert](https://json.expert/), the easiest way to create a web-ready API.
-
----
-
 # flatmarket-server-heroku
 
-A [Flatmarket](https://json.expert/flatmarket/) server for [Heroku](https://www.heroku.com/).
+A [Flatmarket](https://github.com/christophercliff/flatmarket) server for [Heroku](https://www.heroku.com/).
 
 ## Usage
 
